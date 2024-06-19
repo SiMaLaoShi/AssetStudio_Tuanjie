@@ -1,0 +1,85 @@
+name: AssetStudioBuild
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  workflow_dispatch:
+    inputs:
+      createRelease:
+        description: 'Create a new GitHub Release?'
+        required: true
+        default: 'false'
+      versionName:
+        description: 'version name'
+        required: true
+        default: 'v0.16.48'
+
+jobs:
+  try_create_release:
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.try_create_release.outputs.upload_url }}
+    steps:
+      - name: Create Release
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.createRelease == 'true'
+        id: try_create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKENFORCI }}
+        with:
+          tag_name: ${{ github.event.inputs.versionName }}
+          release_name: AssetStudio ${{ github.event.inputs.versionName }}
+          body: Description of the release.
+          draft: false
+          prerelease: false
+
+  build:
+    needs: try_create_release
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        dotnet: ['net472', 'net5.0-windows', 'net6.0-windows']
+    steps:
+      - uses: actions/checkout@v2
+      - uses: microsoft/setup-msbuild@v1.1
+      
+      - name: Download FBX SDK
+        run: |
+          md fbx
+          cd fbx
+          Invoke-WebRequest "https://damassets.autodesk.net/content/dam/autodesk/www/adn/fbx/2020-2-1/fbx202021_fbxsdk_vs2019_win.exe" -OutFile "fbxsdk.exe"
+          Start-Process -FilePath "fbxsdk.exe" /S -Wait
+          Invoke-WebRequest "https://damassets.autodesk.net/content/dam/autodesk/www/adn/fbx/2020-2-1/fbx202021_fbxsdk_vs2019_pdbs.exe" -OutFile "fbxpdb.exe"
+          Start-Process -FilePath "fbxpdb.exe" /S -Wait
+          cd ..
+
+      - name: Nuget Restore
+        run: nuget restore
+      
+      - name: Build ${{ matrix.dotnet }}
+        run: msbuild /t:AssetStudioGUI:publish /p:Configuration=Release /p:TargetFramework=${{ matrix.dotnet }} /p:SelfContained=false /verbosity:minimal
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: AssetStudio.${{ matrix.dotnet }}
+          path: AssetStudioGUI/bin/Release/${{ matrix.dotnet }}/publish
+
+      - name: Create Zip
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.createRelease == 'true'
+        run: Compress-Archive -Path ./AssetStudioGUI/bin/Release/${{ matrix.dotnet }}/publish/* -DestinationPath ./AssetStudioGUI/bin/Release/${{ matrix.dotnet }}/publish/AssetStudio.${{ matrix.dotnet }}_${{ github.event.inputs.versionName }}.zip
+        shell: powershell
+
+      - name: Upload Release Asset
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.createRelease == 'true'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKENFORCI }}
+        with:
+          upload_url: ${{ needs.try_create_release.outputs.upload_url }}
+          asset_path: ./AssetStudioGUI/bin/Release/${{ matrix.dotnet }}/publish/AssetStudio.${{ matrix.dotnet }}_${{ github.event.inputs.versionName }}.zip
+          asset_name: AssetStudio.${{ matrix.dotnet }}_${{ github.event.inputs.versionName }}.zip
+          asset_content_type: application/zip
