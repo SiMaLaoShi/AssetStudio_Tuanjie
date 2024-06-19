@@ -31,7 +31,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.TOKENFORCI }}
         with:
           tag_name: ${{ github.event.inputs.versionName }}
-          release_name: AssetStudio ${{ github.event.inputs.versionName }}
+          release_name: AssetStudio_Tuanjie ${{ github.event.inputs.versionName }}
           body: Description of the release.
           draft: false
           prerelease: false
@@ -81,5 +81,5 @@ jobs:
         with:
           upload_url: ${{ needs.try_create_release.outputs.upload_url }}
           asset_path: ./AssetStudioGUI/bin/Release/${{ matrix.dotnet }}/publish/AssetStudio.${{ matrix.dotnet }}_${{ github.event.inputs.versionName }}.zip
-          asset_name: AssetStudio.${{ matrix.dotnet }}_${{ github.event.inputs.versionName }}.zip
+          asset_name: AssetStudio_Tuanjie.${{ matrix.dotnet }}_${{ github.event.inputs.versionName }}.zip
           asset_content_type: application/zip
