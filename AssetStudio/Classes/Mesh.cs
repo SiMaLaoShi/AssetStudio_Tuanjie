@@ -640,10 +640,27 @@ namespace AssetStudio
                 {
                     var m_IndexFormat = reader.ReadInt32();
                     m_Use16BitIndices = m_IndexFormat == 0;
+                    int m_IndexBuffer_size = reader.ReadInt32();
+                    if (m_Use16BitIndices)
+                    {
+                        m_IndexBuffer = new uint[m_IndexBuffer_size / 2];
+                        for (int i = 0; i < m_IndexBuffer_size / 2; i++)
+                        {
+                            m_IndexBuffer[i] = reader.ReadUInt16();
+                        }
+                        reader.AlignStream();
+                    }
+                    else
+                    {
+                        m_IndexBuffer = new uint[m_IndexBuffer_size];
+                        for (int i = 0; i < m_IndexBuffer_size; i++)
+                        {
+                            m_IndexBuffer[i] = reader.ReadByte();
+                        }
+                        // m_IndexBuffer = reader.ReadUInt32Array(m_IndexBuffer_size / 4);
+                    }
                 }
-
-                int m_IndexBuffer_size = reader.ReadInt32();
-                m_IndexBuffer = reader.ReadUInt32Array(m_IndexBuffer_size / 4);
+                
             }
 
             m_VertexData = new VertexData(reader);
