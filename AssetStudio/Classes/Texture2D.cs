@@ -14,7 +14,18 @@ namespace AssetStudio
 
             if (version[0] >= 2020) //2020.1 and up
             {
-                offset = reader.ReadInt64();
+                if (reader.IsTuanJie())
+                {
+                    //团结1.2以下
+                    if (version[3] < 13)
+                    {
+                        offset = reader.ReadInt64();
+                    }
+                }
+                else
+                {
+                    offset = reader.ReadInt64();
+                }
             }
             else
             {
