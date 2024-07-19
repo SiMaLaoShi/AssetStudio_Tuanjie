@@ -157,8 +157,18 @@ namespace AssetStudio
             }
             if (version[0] > 2020 || (version[0] == 2020 && version[1] >= 2)) //2020.2 and up
             {
-                var m_PlatformBlob = reader.ReadUInt8Array();
-                reader.AlignStream();
+                if (reader.IsTuanJie() && version[0] == 2022 && version[3] >= 13)
+                {
+                    reader.ReadInt32();
+                    reader.ReadInt32();
+                    reader.AlignStream();
+                }
+                else
+                {
+                    var m_PlatformBlob = reader.ReadUInt8Array();
+                    reader.AlignStream();
+
+                }
             }
             var image_data_size = reader.ReadInt32();
             if (image_data_size == 0 && ((version[0] == 5 && version[1] >= 3) || version[0] > 5))//5.3.0 and up
