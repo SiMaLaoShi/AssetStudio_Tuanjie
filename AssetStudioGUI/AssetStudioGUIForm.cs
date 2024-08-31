@@ -2087,7 +2087,7 @@ namespace AssetStudioGUI
         private void aboutAssetStudioToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("AssetStudio is a tool for exploring, extracting and exporting assets and assetbundles.\n" +
-                "For more information, visit https://github.com/zhangjiequan/AssetStudio.",
+                "For more information, visit https://github.com/SiMaLaoShi/AssetStudio_Tuanjie.",
                 "About AssetStudio",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
