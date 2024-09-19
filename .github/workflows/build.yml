@@ -75,7 +75,7 @@ jobs:
 
       - name: Upload Release Asset
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.createRelease == 'true'
-        uses: actions/upload-release-asset@v4
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.TOKENFORCI }}
         with:
