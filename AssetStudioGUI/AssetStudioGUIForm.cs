@@ -89,7 +89,7 @@ namespace AssetStudioGUI
         private string saveDirectoryBackup = string.Empty;
 
         private GUILogger logger;
-        private string maintainerTag = "(maintained by zhangjiequan)";
+        private string maintainerTag = "(maintained by 恶霸威)";
 
         [DllImport("gdi32.dll")]
         private static extern IntPtr AddFontMemResourceEx(IntPtr pbFont, uint cbFont, IntPtr pdv, [In] ref uint pcFonts);

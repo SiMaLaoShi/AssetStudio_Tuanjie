@@ -8,7 +8,7 @@
 		<Version>1.2.6</Version>
 		<AssemblyVersion>1.2.6</AssemblyVersion>
 		<FileVersion>1.2.6</FileVersion>
-		<Copyright>Copyright © zhangjiequan 2018-2023</Copyright>
+		<Copyright>Copyright © 2024 恶霸威;Copyright © zhangjiequan 2018-2023</Copyright>
 		<DebugType>embedded</DebugType>
 		<PackageVersion>1.2.6</PackageVersion>
 	</PropertyGroup>
