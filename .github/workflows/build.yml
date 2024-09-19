@@ -15,7 +15,7 @@ on:
       versionName:
         description: 'version name'
         required: true
-        default: 'v1.1.3'
+        default: 'v1.2.6'
 
 jobs:
   try_create_release:
@@ -26,7 +26,7 @@ jobs:
       - name: Create Release
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.createRelease == 'true'
         id: try_create_release
-        uses: actions/create-release@v1
+        uses: actions/create-release@v4
         env:
           GITHUB_TOKEN: ${{ secrets.TOKENFORCI }}
         with:
@@ -63,7 +63,7 @@ jobs:
         run: msbuild /t:AssetStudioGUI:publish /p:Configuration=Release /p:TargetFramework=${{ matrix.dotnet }} /p:SelfContained=false /verbosity:minimal
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: AssetStudio.${{ matrix.dotnet }}
           path: AssetStudioGUI/bin/Release/${{ matrix.dotnet }}/publish
@@ -75,7 +75,7 @@ jobs:
 
       - name: Upload Release Asset
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.createRelease == 'true'
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v4
         env:
           GITHUB_TOKEN: ${{ secrets.TOKENFORCI }}
         with:
