@@ -79,7 +79,6 @@
             this.exportClassStructuresMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutAssetStudioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.donateAssetStudioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -542,8 +541,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.aboutAssetStudioToolStripMenuItem,
-            this.donateAssetStudioToolStripMenuItem});
+            this.aboutAssetStudioToolStripMenuItem});
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(55, 21);
             this.aboutToolStripMenuItem.Text = "About";
@@ -551,16 +549,9 @@
             // aboutAssetStudioToolStripMenuItem
             // 
             this.aboutAssetStudioToolStripMenuItem.Name = "aboutAssetStudioToolStripMenuItem";
-            this.aboutAssetStudioToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
-            this.aboutAssetStudioToolStripMenuItem.Text = "About AssetStudio";
+            this.aboutAssetStudioToolStripMenuItem.Size = new System.Drawing.Size(229, 22);
+            this.aboutAssetStudioToolStripMenuItem.Text = "About AssetStudio_Tuanjie";
             this.aboutAssetStudioToolStripMenuItem.Click += new System.EventHandler(this.aboutAssetStudioToolStripMenuItem_Click);
-            // 
-            // donateAssetStudioToolStripMenuItem
-            // 
-            this.donateAssetStudioToolStripMenuItem.Name = "donateAssetStudioToolStripMenuItem";
-            this.donateAssetStudioToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
-            this.donateAssetStudioToolStripMenuItem.Text = "Donate to AssetStudio";
-            this.donateAssetStudioToolStripMenuItem.Click += new System.EventHandler(this.donateAssetStudioToolStripMenuItem_Click);
             // 
             // splitContainer1
             // 
@@ -1249,7 +1240,6 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem15;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutAssetStudioToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem donateAssetStudioToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem decompileLua;
     }
 }
