@@ -953,6 +953,7 @@ namespace AssetStudio
         public ClipMuscleConstant m_MuscleClip;
         public AnimationClipBindingConstant m_ClipBindingConstant;
         public AnimationEvent[] m_Events;
+        public StreamingInfo m_StreamingInfo;
 
         public void AnimationClipTuanjiej(ObjectReader reader)
         {
@@ -1018,22 +1019,16 @@ namespace AssetStudio
             {
                 m_Bounds = new AABB(reader);
             }
-
-            //m_AnimData 
-            reader.AlignStream();
-            
             if (version[0] >= 4)//4.0 and up
             {
                 m_MuscleClipSize = reader.ReadUInt32();
-                //todo 这里暂时读取切片，ClipMuscleConstant改了
-                reader.ReadSlice(m_MuscleClipSize);
-                //m_MuscleClip = new ClipMuscleConstant(reader);
+                if (m_MuscleClipSize > 0)
+                {
+                    reader.ReadUInt32(); // not needed
+                    m_MuscleClip = new ClipMuscleConstant(reader);
+                    m_StreamingInfo = new StreamingInfo(reader);
+                }
             }
-
-            //m_StreamingInfo
-            var offset = reader.ReadUInt64();
-            var size = reader.ReadUInt32();
-            var path = reader.ReadAlignedString(); 
 
             if (version[0] > 4 || (version[0] == 4 && version[1] >= 3)) //4.3 and up
             {

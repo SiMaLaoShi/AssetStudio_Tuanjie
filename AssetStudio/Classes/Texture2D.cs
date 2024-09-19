@@ -2,6 +2,20 @@
 
 namespace AssetStudio
 {
+    public class DataStreamingInfo
+    {
+        public uint size;
+        public string path;
+
+        public DataStreamingInfo(ObjectReader reader)
+        {
+            var version = reader.version;
+
+            size = reader.ReadUInt32();
+            path = reader.ReadAlignedString();
+        }
+    }
+
     public class StreamingInfo
     {
         public long offset; //ulong
@@ -14,18 +28,7 @@ namespace AssetStudio
 
             if (version[0] >= 2020) //2020.1 and up
             {
-                if (reader.IsTuanJie())
-                {
-                    //团结1.2以下
-                    if (version[3] < 13)
-                    {
-                        offset = reader.ReadInt64();
-                    }
-                }
-                else
-                {
-                    offset = reader.ReadInt64();
-                }
+                offset = reader.ReadInt64();
             }
             else
             {
@@ -73,6 +76,7 @@ namespace AssetStudio
         public GLTextureSettings m_TextureSettings;
         public ResourceReader image_data;
         public StreamingInfo m_StreamData;
+        public DataStreamingInfo m_DataStreamData;
 
         public Texture2D(ObjectReader reader) : base(reader)
         {
@@ -86,13 +90,12 @@ namespace AssetStudio
 
             if (reader.IsTuanJie())
             {
-                var m_WebStreaming = reader.ReadInt32();
-                var m_PriorityLevel = reader.ReadInt32();
+                var m_WebStreaming = reader.ReadBoolean();
+                reader.AlignStream();
 
+                var m_PriorityLevel = reader.ReadInt32();
                 var m_UploadedMode = reader.ReadInt32();
-                ////m_DataStreamData  (DataStreamingInfo)
-                var size = reader.ReadInt32();
-                var path = reader.ReadAlignedString();
+                m_DataStreamData = new DataStreamingInfo(reader);
             }
            
             m_TextureFormat = (TextureFormat)reader.ReadInt32();
