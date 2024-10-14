@@ -147,6 +147,9 @@ namespace AssetStudio
             {
                 var m_StreamingMipmapsPriority = reader.ReadInt32();
             }
+
+            reader.ReadInt32();
+            
             var m_ImageCount = reader.ReadInt32();
             var m_TextureDimension = reader.ReadInt32();
             m_TextureSettings = new GLTextureSettings(reader);
