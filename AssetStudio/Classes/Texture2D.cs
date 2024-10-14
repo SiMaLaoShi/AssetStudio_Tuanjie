@@ -148,7 +148,10 @@ namespace AssetStudio
                 var m_StreamingMipmapsPriority = reader.ReadInt32();
             }
 
-            reader.ReadInt32();
+            //这个内容不知道是哪个版本新加的
+            var m_VTOnly= reader.ReadBoolean();
+            var m_AlphaIsTransparency = ((Object) this).reader.ReadBoolean();
+            reader.AlignStream();
             
             var m_ImageCount = reader.ReadInt32();
             var m_TextureDimension = reader.ReadInt32();
