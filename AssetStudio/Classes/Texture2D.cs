@@ -117,9 +117,16 @@ namespace AssetStudio
             }
             if (version[0] > 2019 || (version[0] == 2019 && version[1] >= 3)) //2019.3 and up
             {
-                var m_IgnoreMasterTextureLimit = reader.ReadBoolean();
-                //m_IgnoreMasterTextureLimit
-                //m_IgnoreMipmapLimit
+                // 2022.2.0后面用这个m_IgnoreMipmapLimit，换了字段，但是字节长度是一样的
+                if ((version[0] == 2022 && version[1] >= 2) || version[0] >= 2023) //2022.2.0 and up
+                {
+                    var m_IgnoreMipmapLimit = reader.ReadBoolean();
+                    reader.AlignStream();
+                }
+                else
+                {
+                    var m_IgnoreMasterTextureLimit = reader.ReadBoolean();
+                }
             }
             if (
                 (reader.serializedType.m_Type?.ContainsNamePath("Base.m_MipmapLimitGroupName.Array.data") == true)//Auto-detect based on TypeTree
@@ -147,10 +154,7 @@ namespace AssetStudio
             {
                 var m_StreamingMipmapsPriority = reader.ReadInt32();
             }
-
-            //这个内容不知道是哪个版本新加的
-            var m_VTOnly= reader.ReadBoolean();
-            var m_AlphaIsTransparency = ((Object) this).reader.ReadBoolean();
+            
             reader.AlignStream();
             
             var m_ImageCount = reader.ReadInt32();
@@ -166,18 +170,8 @@ namespace AssetStudio
             }
             if (version[0] > 2020 || (version[0] == 2020 && version[1] >= 2)) //2020.2 and up
             {
-                if (reader.IsTuanJie() && version[0] == 2022 && version[3] >= 13)
-                {
-                    reader.ReadInt32();
-                    reader.ReadInt32();
-                    reader.AlignStream();
-                }
-                else
-                {
-                    var m_PlatformBlob = reader.ReadUInt8Array();
-                    reader.AlignStream();
-
-                }
+                var m_PlatformBlob = reader.ReadUInt8Array();
+                reader.AlignStream();
             }
             var image_data_size = reader.ReadInt32();
             if (image_data_size == 0 && ((version[0] == 5 && version[1] >= 3) || version[0] > 5))//5.3.0 and up
