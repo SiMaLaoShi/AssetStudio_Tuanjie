@@ -762,7 +762,8 @@ namespace AssetStudio
             m_Level = reader.ReadSingle();
             m_CycleOffset = reader.ReadSingle();
             m_AverageAngularSpeed = reader.ReadSingle();
-
+            
+            reader.AlignStream();
             m_IndexArray = reader.ReadInt32Array();
             if (version[0] < 4 || (version[0] == 4 && version[1] < 3)) //4.3 down
             {
