@@ -31,6 +31,16 @@ namespace AssetStudio
         }
     }
 
+    public class ACLImportContext
+    {
+        public ACLImportContext(ObjectReader reader)
+        {
+            // reader.ReadBoolean();
+            // reader.ReadDouble();
+            // reader.ReadBoolean();
+        }
+    }
+
     public class AnimationCurve<T>
     {
         public Keyframe<T>[] m_Curve;
@@ -1025,9 +1035,10 @@ namespace AssetStudio
                 m_MuscleClipSize = reader.ReadUInt32();
                 if (m_MuscleClipSize > 0)
                 {
-                    reader.ReadUInt32(); // not needed
-                    m_MuscleClip = new ClipMuscleConstant(reader);
-                    m_StreamingInfo = new StreamingInfo(reader);
+                    reader.ReadSlice(m_MuscleClipSize);
+                    // reader.ReadUInt32(); // not needed
+                    // m_MuscleClip = new ClipMuscleConstant(reader);
+                    // m_StreamingInfo = new StreamingInfo(reader);
                 }
             }
 
@@ -1163,6 +1174,8 @@ namespace AssetStudio
             {
                 m_Events[i] = new AnimationEvent(reader);
             }
+
+            var aclImportContext = new ACLImportContext(((Object) this).reader);
             if (version[0] >= 2017) //2017 and up
             {
                 reader.AlignStream();
