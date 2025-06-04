@@ -57,6 +57,8 @@ namespace AssetStudio
                     if (version[0] >= 2020) //2020.1 and up
                     {
                         var m_RayTraceProcedural = reader.ReadByte();
+                        // var m_virtualGeometry = reader.ReadByte();
+                        // var m_virtualGeometryShadow = reader.ReadByte();
                     }
                     reader.AlignStream();
                 }
@@ -68,7 +70,12 @@ namespace AssetStudio
                     var m_ReceiveShadows = reader.ReadBoolean();
                     reader.AlignStream();
                 }
-
+                //todo 查找确切的版本号 不知道哪个版本开始的
+                if (version[0] == 2022 && version[2] >= 48)
+                {
+                    var m_ShadingRate = ((Object) this).reader.ReadByte();
+                    reader.AlignStream();
+                }
                 if (version[0] >= 2018) //2018 and up
                 {
                     var m_RenderingLayerMask = reader.ReadUInt32();
