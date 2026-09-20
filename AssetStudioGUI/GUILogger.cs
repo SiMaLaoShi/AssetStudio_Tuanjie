@@ -1,6 +1,5 @@
-﻿using AssetStudio;
+using AssetStudio;
 using System;
-using System.Windows.Forms;
 
 namespace AssetStudioGUI
 {
@@ -19,16 +18,14 @@ namespace AssetStudioGUI
             switch (loggerEvent)
             {
                 case LoggerEvent.Error:
-                    if (ShowErrorMessage)
-                    {
-                        MessageBox.Show(message);
-                    }
+                    ErrorLogged?.Invoke(message);
                     break;
                 default:
                     action(message);
                     break;
             }
-
         }
+
+        public event Action<string> ErrorLogged;
     }
 }

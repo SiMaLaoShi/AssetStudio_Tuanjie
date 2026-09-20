@@ -119,6 +119,11 @@
             this.classTextBox = new System.Windows.Forms.TextBox();
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.dumpTextBox = new System.Windows.Forms.TextBox();
+            this.tabPageErrors = new System.Windows.Forms.TabPage();
+            this.errorsTextBox = new System.Windows.Forms.TextBox();
+            this.errorsToolStrip = new System.Windows.Forms.ToolStrip();
+            this.errorsCountLabel = new System.Windows.Forms.ToolStripLabel();
+            this.errorsClearButton = new System.Windows.Forms.ToolStripButton();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.timer = new System.Windows.Forms.Timer(this.components);
@@ -146,6 +151,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.FMODprogressBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.FMODvolumeBar)).BeginInit();
             this.tabPage5.SuspendLayout();
+            this.tabPageErrors.SuspendLayout();
+            this.errorsToolStrip.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -761,6 +768,7 @@
             // 
             this.tabControl2.Controls.Add(this.tabPage4);
             this.tabControl2.Controls.Add(this.tabPage5);
+            this.tabControl2.Controls.Add(this.tabPageErrors);
             this.tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl2.Location = new System.Drawing.Point(0, 0);
             this.tabControl2.Name = "tabControl2";
@@ -1010,7 +1018,59 @@
             this.dumpTextBox.Size = new System.Drawing.Size(768, 606);
             this.dumpTextBox.TabIndex = 0;
             this.dumpTextBox.WordWrap = false;
-            // 
+            //
+            // tabPageErrors
+            //
+            this.tabPageErrors.Controls.Add(this.errorsTextBox);
+            this.tabPageErrors.Controls.Add(this.errorsToolStrip);
+            this.tabPageErrors.Location = new System.Drawing.Point(4, 22);
+            this.tabPageErrors.Name = "tabPageErrors";
+            this.tabPageErrors.Size = new System.Drawing.Size(768, 606);
+            this.tabPageErrors.TabIndex = 2;
+            this.tabPageErrors.Text = "Errors";
+            this.tabPageErrors.UseVisualStyleBackColor = true;
+            //
+            // errorsToolStrip
+            //
+            this.errorsToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.errorsToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.errorsCountLabel,
+            this.errorsClearButton});
+            this.errorsToolStrip.Location = new System.Drawing.Point(0, 0);
+            this.errorsToolStrip.Name = "errorsToolStrip";
+            this.errorsToolStrip.Size = new System.Drawing.Size(768, 25);
+            this.errorsToolStrip.TabIndex = 0;
+            //
+            // errorsCountLabel
+            //
+            this.errorsCountLabel.Name = "errorsCountLabel";
+            this.errorsCountLabel.Size = new System.Drawing.Size(44, 22);
+            this.errorsCountLabel.Text = "Errors: 0";
+            //
+            // errorsClearButton
+            //
+            this.errorsClearButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.errorsClearButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.errorsClearButton.Name = "errorsClearButton";
+            this.errorsClearButton.Size = new System.Drawing.Size(38, 22);
+            this.errorsClearButton.Text = "Clear";
+            this.errorsClearButton.Click += new System.EventHandler(this.errorsClearButton_Click);
+            //
+            // errorsTextBox
+            //
+            this.errorsTextBox.BackColor = System.Drawing.SystemColors.Window;
+            this.errorsTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.errorsTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.errorsTextBox.Font = new System.Drawing.Font("Consolas", 9F);
+            this.errorsTextBox.Location = new System.Drawing.Point(0, 25);
+            this.errorsTextBox.Multiline = true;
+            this.errorsTextBox.Name = "errorsTextBox";
+            this.errorsTextBox.ReadOnly = true;
+            this.errorsTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.errorsTextBox.Size = new System.Drawing.Size(768, 581);
+            this.errorsTextBox.TabIndex = 1;
+            this.errorsTextBox.WordWrap = false;
+            //
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1132,6 +1192,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.FMODvolumeBar)).EndInit();
             this.tabPage5.ResumeLayout(false);
             this.tabPage5.PerformLayout();
+            this.tabPageErrors.ResumeLayout(false);
+            this.tabPageErrors.PerformLayout();
+            this.errorsToolStrip.ResumeLayout(false);
+            this.errorsToolStrip.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.contextMenuStrip1.ResumeLayout(false);
@@ -1241,6 +1305,11 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutAssetStudioToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem decompileLua;
+        private System.Windows.Forms.TabPage tabPageErrors;
+        private System.Windows.Forms.TextBox errorsTextBox;
+        private System.Windows.Forms.ToolStrip errorsToolStrip;
+        private System.Windows.Forms.ToolStripLabel errorsCountLabel;
+        private System.Windows.Forms.ToolStripButton errorsClearButton;
     }
 }
 

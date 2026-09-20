@@ -101,6 +101,7 @@ namespace AssetStudio
                 try
                 {
                     var assetsFile = new SerializedFile(reader, this);
+                    Logger.UnityVersion = assetsFile.unityVersion;
                     CheckStrippedVersion(assetsFile);
                     assetsFileList.Add(assetsFile);
                     assetsFileListHash.Add(assetsFile.fileName);
@@ -160,6 +161,7 @@ namespace AssetStudio
                     {
                         assetsFile.SetVersion(unityVersion);
                     }
+                    Logger.UnityVersion = assetsFile.unityVersion;
                     CheckStrippedVersion(assetsFile);
                     assetsFileList.Add(assetsFile);
                     assetsFileListHash.Add(assetsFile.fileName);
@@ -486,10 +488,10 @@ namespace AssetStudio
                     catch (Exception e)
                     {
                         var sb = new StringBuilder();
-                        sb.AppendLine("Unable to load object")
+                        sb.Append("Unable to load object ")
+                            .AppendLine($"【{objectReader.type}】")
                             .AppendLine($"Assets {assetsFile.fileName}")
                             .AppendLine($"Path {assetsFile.originalPath}")
-                            .AppendLine($"Type {objectReader.type}")
                             .AppendLine($"PathID {objectInfo.m_PathID}")
                             .Append(e);
                         Logger.Error(sb.ToString());
@@ -503,9 +505,9 @@ namespace AssetStudio
         private void ProcessAssets()
         {
             Logger.Info("Process Assets...");
-
-            foreach (var assetsFile in assetsFileList)
-            {
+             
+                         foreach (var assetsFile in assetsFileList)
+                         {
                 foreach (var obj in assetsFile.Objects)
                 {
                     if (obj is GameObject m_GameObject)

@@ -113,6 +113,7 @@ namespace AssetStudioGUI
             FMODinit();
 
             logger = new GUILogger(StatusStripUpdate);
+            logger.ErrorLogged += OnErrorLogged;
             Logger.Default = logger;
             Progress.Default = new Progress<int>(SetProgressBarValue);
             Studio.StatusStripUpdate = StatusStripUpdate;
@@ -2077,6 +2078,35 @@ namespace AssetStudioGUI
             {
                 dumpTextBox.Text = DumpAsset(lastSelectedItem.Asset);
             }
+        }
+
+        private int errorCount;
+
+        private void OnErrorLogged(string message)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new Action<string>(OnErrorLogged), message);
+                return;
+            }
+
+            errorCount++;
+            errorsCountLabel.Text = $"Errors: {errorCount}";
+
+            var unityVersion = string.IsNullOrEmpty(Logger.UnityVersion) ? "unknown" : Logger.UnityVersion;
+            errorsTextBox.AppendText($"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff} [Unity {unityVersion}] {message}{Environment.NewLine}");
+
+            if (logger.ShowErrorMessage && tabControl2.SelectedTab != tabPageErrors)
+            {
+                tabControl2.SelectedTab = tabPageErrors;
+            }
+        }
+
+        private void errorsClearButton_Click(object sender, EventArgs e)
+        {
+            errorCount = 0;
+            errorsCountLabel.Text = "Errors: 0";
+            errorsTextBox.Clear();
         }
 
         private void toolStripMenuItem15_Click(object sender, EventArgs e)
