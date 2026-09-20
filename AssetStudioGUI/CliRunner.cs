@@ -217,6 +217,11 @@ namespace AssetStudioGUI
                         options.Verbosity = ConsoleDebugVerbosity;
                         break;
                     default:
+                        if (!arg.StartsWith("-", StringComparison.Ordinal))
+                        {
+                            options.InputPaths.Add(arg);
+                            break;
+                        }
                         Console.Error.WriteLine($"Unknown argument: {arg}");
                         return false;
                 }
@@ -239,11 +244,23 @@ namespace AssetStudioGUI
 
             if (string.IsNullOrEmpty(options.OutputPath))
             {
-                Console.Error.WriteLine("An output folder is required (--output).");
-                return false;
+                options.OutputPath = DefaultOutputPath(options.InputPaths[0]);
             }
 
             return true;
+        }
+
+        private static string DefaultOutputPath(string inputPath)
+        {
+            var fullPath = Path.GetFullPath(inputPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            var parent = Path.GetDirectoryName(fullPath);
+
+            if (Directory.Exists(fullPath))
+            {
+                return Path.Combine(parent, Path.GetFileName(fullPath) + ".pkg-doctor");
+            }
+
+            return Path.Combine(parent, Path.GetFileNameWithoutExtension(fullPath) + ".pkg-doctor");
         }
 
         private static string NextValue(string[] args, ref int index, string arg)
@@ -291,11 +308,13 @@ namespace AssetStudioGUI
             Console.Error.WriteLine(@"AssetStudio_Tuanjie CLI
 
 Usage:
-  AssetStudioGUI.exe --cli --input <file-or-folder> --output <folder> [options]
+  AssetStudioGUI.exe --cli [options] <file-or-folder> [<file-or-folder>...]
+  AssetStudioGUI.exe --cli --analyze /path/to/game.apk
 
 Options:
-  -i, --input <path>        Input asset/bundle file or folder. Repeatable. (required)
-  -o, --output <folder>     Output folder. (required)
+  -i, --input <path>        Input asset/bundle file or folder. Repeatable.
+                            May also be given as a bare positional argument.
+  -o, --output <folder>     Output folder. Defaults to <input>.pkg-doctor next to the input.
       --unity-version <v>   Override the Unity version, e.g. 2022.3.27f1.
       --assembly <folder>   Assembly folder for MonoBehaviour parsing.
       --convert-type <fmt>  Texture format: png (default), jpg, bmp, tga.
