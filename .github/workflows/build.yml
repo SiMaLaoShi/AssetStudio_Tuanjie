@@ -41,7 +41,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        dotnet: ['net472', 'net5.0-windows', 'net6.0-windows']
+        dotnet: ['net6.0-windows']
     steps:
       - uses: actions/checkout@v2
       - uses: microsoft/setup-msbuild@v1.1

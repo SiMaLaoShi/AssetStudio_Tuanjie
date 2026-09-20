@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFrameworks>net472;net5.0-windows;net6.0-windows</TargetFrameworks>
+		<TargetFramework>net6.0-windows</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
 		<ApplicationIcon>Resources\as.ico</ApplicationIcon>
 		<Version>1.5.0</Version>
@@ -53,16 +53,11 @@
 		</ContentWithTargetPath>
 	</ItemGroup>
 
-	<ItemGroup Condition=" '$(TargetFramework)' != 'net472' ">
+	<ItemGroup>
 		<PackageReference Include="OpenTK" Version="4.6.7" />
 		<Reference Include="OpenTK.WinForms">
 			<HintPath>Libraries\OpenTK.WinForms.dll</HintPath>
 		</Reference>
-	</ItemGroup>
-
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
-		<PackageReference Include="OpenTK" Version="3.1.0" />
-		<PackageReference Include="OpenTK.GLControl" Version="3.1.0" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -59,10 +59,6 @@ AssetStudio 是一个用于探索、提取和导出资产和资产包的工具�
 
 ## 系统要求
 
-- AssetStudio.net472
-   - [.NET Framework 4.7.2](https://dotnet.microsoft.com/download/dotnet-framework/net472)
-- AssetStudio.net5
-   - [.NET Desktop Runtime 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
 - AssetStudio.net6
    - [.NET Desktop Runtime 6.0](https://dotnet.microsoft.com/download/dotnet/6.0)
 

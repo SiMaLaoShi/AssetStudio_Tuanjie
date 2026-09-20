@@ -14,12 +14,10 @@ namespace AssetStudioGUI
 
         internal DialogResult ShowDialog(IWin32Window owner = null)
         {
-//#if NETFRAMEWORK
             if (Environment.OSVersion.Version.Major >= 6)
             {
                 return ShowVistaDialog(owner);
             }
-//#endif
             return ShowFolderBrowserDialog(owner);
         }
 
@@ -82,13 +80,11 @@ namespace AssetStudioGUI
                 {
                     frm.SelectedPath = InitialFolder;
                 }
-#if !NETFRAMEWORK
                 if (Title != null)
                 {
                     frm.Description = Title;
                     frm.UseDescriptionForTitle = true;
                 }
-#endif
                 var result = owner == null ? frm.ShowDialog() : frm.ShowDialog(owner);
                 if (result == DialogResult.OK)
                 {

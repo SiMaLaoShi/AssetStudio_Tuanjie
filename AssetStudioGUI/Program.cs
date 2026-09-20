@@ -19,9 +19,7 @@ namespace AssetStudioGUI
                 Environment.Exit(CliRunner.Run(args));
             }
 
-#if !NETFRAMEWORK
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
-#endif
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new AssetStudioGUIForm(args));
