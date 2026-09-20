@@ -309,12 +309,13 @@ namespace AssetStudio
 
         public FloatCurve(ObjectReader reader)
         {
+            var version = reader.version;
             curve = new AnimationCurve<float>(reader, reader.ReadSingle);
             attribute = reader.ReadAlignedString();
             path = reader.ReadAlignedString();
             classID = (ClassIDType)reader.ReadInt32();
             script = new PPtr<MonoScript>(reader);
-            if (reader.IsTuanJie())
+            if (reader.IsTuanJie() || version[0] > 2022 || (version[0] == 2022 && version[1] >= 2)) //2022.2 and up
                 flags = reader.ReadInt32();
         }
     }
@@ -344,6 +345,7 @@ namespace AssetStudio
 
         public PPtrCurve(ObjectReader reader)
         {
+            var version = reader.version;
             int numCurves = reader.ReadInt32();
             curve = new PPtrKeyframe[numCurves];
             for (int i = 0; i < numCurves; i++)
@@ -355,7 +357,7 @@ namespace AssetStudio
             path = reader.ReadAlignedString();
             classID = reader.ReadInt32();
             script = new PPtr<MonoScript>(reader);
-            if (reader.IsTuanJie())
+            if (reader.IsTuanJie() || version[0] > 2022 || (version[0] == 2022 && version[1] >= 2)) //2022.2 and up
                 flags = reader.ReadInt32();
         }
     }
