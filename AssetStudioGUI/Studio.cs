@@ -39,6 +39,8 @@ namespace AssetStudioGUI
         public static List<AssetItem> exportableAssets = new List<AssetItem>();
         public static List<AssetItem> visibleAssets = new List<AssetItem>();
         internal static Action<string> StatusStripUpdate = x => { };
+        internal static Action<string> ErrorHandler;
+        internal static bool InteractiveDialogs = true;
 
         public static int ExtractFolder(string path, string savePath)
         {
@@ -375,92 +377,107 @@ namespace AssetStudioGUI
         {
             ThreadPool.QueueUserWorkItem(state =>
             {
-                Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
-
-                int toExportCount = toExportAssets.Count;
-                int exportedCount = 0;
-                int i = 0;
-                Progress.Reset();
-                foreach (var asset in toExportAssets)
-                {
-                    string exportPath;
-                    switch (Properties.Settings.Default.assetGroupOption)
-                    {
-                        case 0: //type name
-                            exportPath = Path.Combine(savePath, asset.TypeString);
-                            break;
-                        case 1: //container path
-                            if (!string.IsNullOrEmpty(asset.Container))
-                            {
-                                exportPath = Path.Combine(savePath, Path.GetDirectoryName(asset.Container));
-                            }
-                            else
-                            {
-                                exportPath = savePath;
-                            }
-                            break;
-                        case 2: //source file
-                            if (string.IsNullOrEmpty(asset.SourceFile.originalPath))
-                            {
-                                exportPath = Path.Combine(savePath, asset.SourceFile.fileName + "_export");
-                            }
-                            else
-                            {
-                                exportPath = Path.Combine(savePath, Path.GetFileName(asset.SourceFile.originalPath) + "_export", asset.SourceFile.fileName);
-                            }
-                            break;
-                        default:
-                            exportPath = savePath;
-                            break;
-                    }
-                    exportPath += Path.DirectorySeparatorChar;
-                    StatusStripUpdate($"[{exportedCount}/{toExportCount}] Exporting {asset.TypeString}: {asset.Text}");
-                    try
-                    {
-                        switch (exportType)
-                        {
-                            case ExportType.Raw:
-                                if (ExportRawFile(asset, exportPath))
-                                {
-                                    exportedCount++;
-                                }
-                                break;
-                            case ExportType.Dump:
-                                if (ExportDumpFile(asset, exportPath))
-                                {
-                                    exportedCount++;
-                                }
-                                break;
-                            case ExportType.Convert:
-                                if (ExportConvertFile(asset, exportPath))
-                                {
-                                    exportedCount++;
-                                }
-                                break;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Export {asset.Type}:{asset.Text} error\r\n{ex.Message}\r\n{ex.StackTrace}");
-                    }
-
-                    Progress.Report(++i, toExportCount);
-                }
-
-                var statusText = exportedCount == 0 ? "Nothing exported." : $"Finished exporting {exportedCount} assets.";
-
-                if (toExportCount > exportedCount)
-                {
-                    statusText += $" {toExportCount - exportedCount} assets skipped (not extractable or files already exist)";
-                }
-
-                StatusStripUpdate(statusText);
-
-                if (Properties.Settings.Default.openAfterExport && exportedCount > 0)
-                {
-                    OpenFolderInExplorer(savePath);
-                }
+                ExportAssetsSync(savePath, toExportAssets, exportType);
             });
+        }
+
+        public static int ExportAssetsSync(string savePath, List<AssetItem> toExportAssets, ExportType exportType)
+        {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+
+            int toExportCount = toExportAssets.Count;
+            int exportedCount = 0;
+            int i = 0;
+            Progress.Reset();
+            foreach (var asset in toExportAssets)
+            {
+                string exportPath;
+                switch (Properties.Settings.Default.assetGroupOption)
+                {
+                    case 0: //type name
+                        exportPath = Path.Combine(savePath, asset.TypeString);
+                        break;
+                    case 1: //container path
+                        if (!string.IsNullOrEmpty(asset.Container))
+                        {
+                            exportPath = Path.Combine(savePath, Path.GetDirectoryName(asset.Container));
+                        }
+                        else
+                        {
+                            exportPath = savePath;
+                        }
+                        break;
+                    case 2: //source file
+                        if (string.IsNullOrEmpty(asset.SourceFile.originalPath))
+                        {
+                            exportPath = Path.Combine(savePath, asset.SourceFile.fileName + "_export");
+                        }
+                        else
+                        {
+                            exportPath = Path.Combine(savePath, Path.GetFileName(asset.SourceFile.originalPath) + "_export", asset.SourceFile.fileName);
+                        }
+                        break;
+                    default:
+                        exportPath = savePath;
+                        break;
+                }
+                exportPath += Path.DirectorySeparatorChar;
+                StatusStripUpdate($"[{exportedCount}/{toExportCount}] Exporting {asset.TypeString}: {asset.Text}");
+                try
+                {
+                    switch (exportType)
+                    {
+                        case ExportType.Raw:
+                            if (ExportRawFile(asset, exportPath))
+                            {
+                                exportedCount++;
+                            }
+                            break;
+                        case ExportType.Dump:
+                            if (ExportDumpFile(asset, exportPath))
+                            {
+                                exportedCount++;
+                            }
+                            break;
+                        case ExportType.Convert:
+                            if (ExportConvertFile(asset, exportPath))
+                            {
+                                exportedCount++;
+                            }
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    var message = $"Export {asset.Type}:{asset.Text} error\r\n{ex.Message}\r\n{ex.StackTrace}";
+                    if (ErrorHandler != null)
+                    {
+                        ErrorHandler(message);
+                    }
+                    else
+                    {
+                        MessageBox.Show(message);
+                    }
+                }
+
+                Progress.Report(++i, toExportCount);
+            }
+
+            var statusText = exportedCount == 0 ? "Nothing exported." : $"Finished exporting {exportedCount} assets.";
+
+            if (toExportCount > exportedCount)
+            {
+                statusText += $" {toExportCount - exportedCount} assets skipped (not extractable or files already exist)";
+            }
+
+            StatusStripUpdate(statusText);
+
+            if (Properties.Settings.Default.openAfterExport && exportedCount > 0)
+            {
+                OpenFolderInExplorer(savePath);
+            }
+
+            return exportedCount;
         }
 
         public static void ExportAssetsList(string savePath, List<AssetItem> toExportAssets, ExportListType exportListType)
@@ -685,15 +702,22 @@ namespace AssetStudioGUI
         {
             if (!assemblyLoader.Loaded)
             {
-                var openFolderDialog = new OpenFolderDialog();
-                openFolderDialog.Title = "Select Assembly Folder";
-                if (openFolderDialog.ShowDialog() == DialogResult.OK)
+                if (!InteractiveDialogs)
                 {
-                    assemblyLoader.Load(openFolderDialog.Folder);
+                    assemblyLoader.Loaded = true;
                 }
                 else
                 {
-                    assemblyLoader.Loaded = true;
+                    var openFolderDialog = new OpenFolderDialog();
+                    openFolderDialog.Title = "Select Assembly Folder";
+                    if (openFolderDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        assemblyLoader.Load(openFolderDialog.Folder);
+                    }
+                    else
+                    {
+                        assemblyLoader.Loaded = true;
+                    }
                 }
             }
             return m_MonoBehaviour.ConvertToTypeTree(assemblyLoader);

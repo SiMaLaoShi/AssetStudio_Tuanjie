@@ -14,6 +14,11 @@ namespace AssetStudioGUI
         [STAThread]
         static void Main(string[] args)
         {
+            if (args.Any(x => string.Equals(x, "--cli", StringComparison.OrdinalIgnoreCase)))
+            {
+                Environment.Exit(CliRunner.Run(args));
+            }
+
 #if !NETFRAMEWORK
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
 #endif
