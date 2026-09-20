@@ -1,9 +1,11 @@
 using AssetStudio;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace AssetStudioGUI
 {
@@ -87,10 +89,69 @@ namespace AssetStudioGUI
                 return 1;
             }
 
+            if (options.Analyze)
+            {
+                Logger.Info($"Analyzing {toExport.Count} assets...");
+                var tsvPath = Path.Combine(options.OutputPath, "pkg.tsv");
+                using (var writer = new StreamWriter(tsvPath, false, new UTF8Encoding(false)))
+                {
+                    Analyzer.ExportPackage(options.OutputPath, toExport, writer);
+                }
+                Logger.Info($"Done. Wrote {tsvPath}.");
+                RunPkgScript(options, tsvPath);
+                return 0;
+            }
+
             Logger.Info($"Exporting {toExport.Count} assets...");
             var exported = Studio.ExportAssetsSync(options.OutputPath, toExport, ExportType.Convert);
             Logger.Info($"Done. Exported {exported}/{toExport.Count} assets into {options.OutputPath}.");
             return 0;
+        }
+
+        private static void RunPkgScript(CliOptions options, string tsvPath)
+        {
+            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            var scriptExe = Path.Combine(baseDir, "script.exe");
+            var pkgPy = Path.Combine(baseDir, "pkg.py");
+
+            string fileName;
+            string arguments;
+            if (!options.NoScript && File.Exists(scriptExe))
+            {
+                fileName = scriptExe;
+                arguments = $"\"{tsvPath}\"";
+            }
+            else if (!options.NoScript && File.Exists(pkgPy))
+            {
+                fileName = "python.exe";
+                arguments = $"\"{pkgPy}\" \"{tsvPath}\"";
+            }
+            else
+            {
+                return;
+            }
+
+            try
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName = fileName,
+                    Arguments = arguments,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                };
+                using (var process = Process.Start(psi))
+                {
+                    Console.Write(process.StandardOutput.ReadToEnd());
+                    Console.Error.Write(process.StandardError.ReadToEnd());
+                    process.WaitForExit();
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Failed to run report script: {e.Message}", e);
+            }
         }
 
         private static void ApplySettings(CliOptions options)
@@ -144,6 +205,12 @@ namespace AssetStudioGUI
                         break;
                     case "--group":
                         options.GroupOption = ParseGroupOption(NextValue(args, ref i, arg));
+                        break;
+                    case "--analyze":
+                        options.Analyze = true;
+                        break;
+                    case "--no-script":
+                        options.NoScript = true;
                         break;
                     case "-v":
                     case "--verbose":
@@ -235,6 +302,8 @@ Options:
       --no-convert-texture  Keep raw texture data instead of converting.
       --no-convert-audio    Keep raw audio data instead of converting to wav.
       --group <0|1|2>       Output layout: 0 type (default), 1 container, 2 source file.
+      --analyze             Package analysis mode: write pkg.tsv and run pkg.py/script.exe.
+      --no-script           With --analyze, skip running the report script.
   -v, --verbose             Print verbose parse logs.");
         }
 
@@ -248,6 +317,8 @@ Options:
             public bool NoConvertTexture;
             public bool NoConvertAudio;
             public int GroupOption;
+            public bool Analyze;
+            public bool NoScript;
             public int Verbosity = ConsoleInfoVerbosity;
         }
 

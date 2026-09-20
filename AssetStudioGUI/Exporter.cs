@@ -11,11 +11,16 @@ namespace AssetStudioGUI
     {
         public static bool ExportTexture2D(AssetItem item, string exportPath)
         {
+            return ExportTexture2D(item, exportPath, out _);
+        }
+
+        public static bool ExportTexture2D(AssetItem item, string exportPath, out string exportFullPath)
+        {
             var m_Texture2D = (Texture2D)item.Asset;
             if (Properties.Settings.Default.convertTexture)
             {
                 var type = Properties.Settings.Default.convertType;
-                if (!TryExportFile(exportPath, item, "." + type.ToString().ToLower(), out var exportFullPath))
+                if (!TryExportFile(exportPath, item, "." + type.ToString().ToLower(), out exportFullPath))
                     return false;
                 var image = m_Texture2D.ConvertToImage(true);
                 if (image == null)
@@ -31,7 +36,7 @@ namespace AssetStudioGUI
             }
             else
             {
-                if (!TryExportFile(exportPath, item, ".tex", out var exportFullPath))
+                if (!TryExportFile(exportPath, item, ".tex", out exportFullPath))
                     return false;
                 File.WriteAllBytes(exportFullPath, m_Texture2D.image_data.GetData());
                 return true;
@@ -127,10 +132,18 @@ namespace AssetStudioGUI
 
         public static bool ExportMesh(AssetItem item, string exportPath)
         {
+            return ExportMesh(item, exportPath, out _);
+        }
+
+        public static bool ExportMesh(AssetItem item, string exportPath, out string exportFullPath)
+        {
             var m_Mesh = (Mesh)item.Asset;
             if (m_Mesh.m_VertexCount <= 0)
+            {
+                exportFullPath = null;
                 return false;
-            if (!TryExportFile(exportPath, item, ".obj", out var exportFullPath))
+            }
+            if (!TryExportFile(exportPath, item, ".obj", out exportFullPath))
                 return false;
             var sb = new StringBuilder();
             sb.AppendLine("g " + m_Mesh.m_Name);
